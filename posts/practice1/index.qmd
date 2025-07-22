@@ -1,0 +1,208 @@
+---
+title: "[실습] 날짜형, 문자형 다루기 연습 - 자전거 시스템의 대여 기록"
+author: "Haejin Harry Yoon"
+date: "2025-07-23"
+categories: [code]
+---
+
+## 공유 자전거 대여 기록
+
+데이터셋은 런던 공유 자전거 시스템의 대여 기록을 다루고 있으며, 대여 및 반납 정보, 날씨 정보, 시간대 등의 다양한 특성(features)을 포함하고 있습니다.
+
+- datetime: 날짜 및 시간 정보
+- season: 계절 (1: 봄, 2: 여름, 3: 가을, 4: 겨울)
+- holiday: 공휴일 여부 (0: 공휴일 아님, 1: 공휴일)
+- workingday: 평일 여부 (0: 주말 또는 공휴일, 1: 평일)
+- weather: 날씨 상황 (1: 맑음, 2: 흐림, 3: 약간의 눈/비, 4: 폭우/폭설)
+- temp: 기온 (섭씨)
+- atemp: 체감 온도 (섭씨)
+- humidity: 습도 (%)
+- windspeed: 풍속 (m/s)
+- casual: 비회원 대여 수
+- registered: 회원 대여 수
+- count: 총 대여 수
+
+<br>
+
+### 데이터 불러오기
+```{python}
+#| results: hide
+#| message: false
+import pandas as pd
+
+df = pd.read_csv('./bike_data.csv')
+print(df.head())
+
+```
+
+<br>
+
+### 데이터 속성 변환
+
+```{python}
+#| results: hide
+df = df.astype({'datetime' : 'datetime64[ns]', 'weather' : 'int64', 
+                'season' : 'object', 'workingday' : 'object', 
+                'holiday' : 'object'})
+```
+
+<br>
+
+### 문제1. 계절이 1일 때, 가장 대여량이 많은 시간대를 구하시오.
+
+```{python}
+#| message: false
+
+df_s1 = df[df["season"]==1]
+df_s1
+df_s1['hour'] = df_s1['datetime'].dt.hour
+df_s1.groupby('hour')['count'].max()
+
+df_s1.loc[df_s1['count'].idxmax()]["hour"]
+
+```
+
+<br>
+
+### 문제2. 각 계절별 평균 대여량을 구하시오.
+
+```{python}
+df.groupby('season')['count'].mean()
+
+```
+
+<br>
+
+### 문제3. 특정 달 동안의 총 대여량을 구하시오.
+
+```{python}
+df_m = df[df['datetime'].dt.month == 1]
+df_m["count"].sum()
+
+```
+
+<br>
+
+### 문제4. 가장 대여량이 많은 날짜를 구하시오.
+
+```{python}
+df['newdate'] = df["datetime"].dt.date
+a = df.groupby('newdate')[['count']].sum()
+max_date = a.idxmax()
+max_count = a.max()
+
+```
+
+<br>
+
+### 문제5. 시간대별 평균 대여량을 구하시오.
+
+```{python}
+df["newHour"] = df["datetime"].dt.hour
+df.groupby("newHour", as_index=False)["count"].mean()
+
+```
+
+<br>
+
+### 문제6. 특정 요일 동안의 총 대여량을 구하시오.
+
+```{python}
+df['newDay'] = df["datetime"].dt.weekday
+df.groupby("newDay")["count"].sum()
+
+```
+
+<br>
+
+### 문제7. 주어진 Bike Sharing 데이터를 사용하여 넓은 형식에서 긴 형식으로 변환하시오. casual과 registered 열을 하나의 열로 변환하고 각 기록의 대여 유형과 대여 수를 포함하는 긴 형식 데이터 프레임을 만드시오.
+
+```{python}
+df_melted = pd.melt(df, 
+                    id_vars=['datetime', 'season'],
+                    value_vars=['casual', 'registered'],
+                    var_name='user_type', 
+                    value_name='user_count')
+df_melted
+```
+
+<br>
+
+### 문제8. 이전에 생성한 긴 형식 데이터프레임을 활용하여 각 계절(season)별로 casual과 registered 사용자의 평균 대여 수(count)를 구하시오.
+
+```{python}
+df_melted.groupby(['season', 'user_type'])[["user_count"]].mean().reset_index()
+
+```
+
+<br>
+<br>
+<br>
+
+## 앱 로그 데이터
+
+### 로그 데이터 가져오기
+
+``` {python}
+pd.set_option('display.max_columns', None) # 전체 칼럼 정보 프린트 옵션
+df = pd.read_csv('./logdata.csv')
+df
+```
+
+<br>
+
+### 문제1. 로그 칼럼에서 숫자 정보만 추출하시오.
+
+```{python}
+df_extracted_n = df['로그'].str.extractall(r'(\d+)')
+df_extracted_n
+
+```
+
+<br>
+
+### 문제2. 로그 칼럼에서 모든 시간 정보를 추출하시오.
+
+```{python}
+df_time = df['로그'].str.extract(r'(\d+:\d+:\d+)')
+df_time
+
+```
+
+<br>
+
+### 문제3. 로그 칼럼에서 한글 정보만 추출하시오.
+
+```{python}
+df_Kor = df['로그'].str.extract(r'([가-힣]+)')
+df_Kor
+
+```
+
+<br>
+
+### 문제4. 로그 칼럼에서 특수 문자를 제거하시오.
+
+```{python}
+df_special = df['로그'].str.replace(r'([^a-zA-Z0-9가-힣\s])', '',regex=True)
+df_special
+```
+
+<br>
+
+### 문제5. 로그 칼럼에서 유저, Amount 값을 추출한 후 각 유저별 Amount의 평균값을 계산하시오.
+나의 풀이(시도하였으나 해결하지 못함)
+```{python}
+df['이름'] = df['로그'].str.extract(r'([가-힣]+)')
+df['Amount'] = df['로그'].str.extract(r'()')
+df['로그'].str.extract(r'(Amount:\s + \d+)')
+```
+
+
+풀이
+```{python}
+df['Amount'] = df['로그'].str.extract(r'Amount:\s*(\d+)').astype(float)
+df['User'] = df['로그'].str.extract(r'User:\s*([가-힣]+)')
+grouped = df.groupby('User')['Amount'].mean().reset_index()
+print("\n그룹별 평균 Amount 계산:", grouped)
+```

@@ -2,10 +2,9 @@
 title: "Intro"
 author: "Haejin Harry Yoon"
 date: "2025-07-22"
-categories: [code, analysis]
-image: ""
+categories: [notice]
 ---
 
 안녕하세요<br>
-나의 첫 블로그 입니다.
+Harry의 첫 블로그 입니다.
 

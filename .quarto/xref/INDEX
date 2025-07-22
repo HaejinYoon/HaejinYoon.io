@@ -13,5 +13,11 @@
   },
   "posts/Intro/index.qmd": {
     "index.html": "1740e0d1"
+  },
+  "posts/문제풀이/index.qmd": {
+    "index.html": "56482fd2"
+  },
+  "posts/practice1/index.qmd": {
+    "index.html": "04d67022"
   }
 }

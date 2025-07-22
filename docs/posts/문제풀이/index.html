@@ -9,7 +9,7 @@
 <meta name="author" content="Haejin Harry Yoon">
 <meta name="dcterms.date" content="2025-07-22">
 
-<title>Welcome To My Blog 2 – Harry’s Blog</title>
+<title>[실습] 날짜형, 문자형 다루기 연습 - 자전거 시스템의 대여 기록 – Harry’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -41,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-991b1886d3c685c7aa2b62b80640c7af.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-8e80e45b405cdf6bef599e74052dea33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -71,7 +106,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="../../bootstrap.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed fullcontent quarto-light">
@@ -111,9 +146,9 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Welcome To My Blog 2</h1>
+      <h1 class="title">[실습] 날짜형, 문자형 다루기 연습 - 자전거 시스템의 대여 기록</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+                <div class="quarto-category">code</div>
               </div>
                   </div>
   </div>
@@ -150,11 +185,80 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="thumbnail.jpg" class="img-fluid"></p>
-<p>안녕하세요</p>
+<p>데이터셋은 런던 공유 자전거 시스템의 대여 기록을 다루고 있으며, 대여 및 반납 정보, 날씨 정보, 시간대 등의 다양한 특성(features)을 포함하고 있습니다.</p>
+<ul>
+<li>datetime: 날짜 및 시간 정보</li>
+<li>season: 계절 (1: 봄, 2: 여름, 3: 가을, 4: 겨울)</li>
+<li>holiday: 공휴일 여부 (0: 공휴일 아님, 1: 공휴일)</li>
+<li>workingday: 평일 여부 (0: 주말 또는 공휴일, 1: 평일)</li>
+<li>weather: 날씨 상황 (1: 맑음, 2: 흐림, 3: 약간의 눈/비, 4: 폭우/폭설)</li>
+<li>temp: 기온 (섭씨)</li>
+<li>atemp: 체감 온도 (섭씨)</li>
+<li>humidity: 습도 (%)</li>
+<li>windspeed: 풍속 (m/s)</li>
+<li>casual: 비회원 대여 수</li>
+<li>registered: 회원 대여 수</li>
+<li>count: 총 대여 수</li>
+</ul>
+<section id="데이터-불러오기" class="level2">
+<h2 class="anchored" data-anchor-id="데이터-불러오기">데이터 불러오기</h2>
+<div id="f17f56b1" class="cell" data-message="false" data-results="hide" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'./bike_data.csv'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              datetime  season  holiday  workingday  weather   temp   atemp  \
+0  2011-09-05 17:00:00       3        1           0        2  27.06  29.545   
+1  2011-05-17 11:00:00       2        0           1        2  22.96  26.515   
+2  2011-11-10 09:00:00       4        0           1        2  17.22  21.210   
+3  2011-10-13 07:00:00       4        0           1        3  22.14  25.760   
+4  2011-10-15 14:00:00       4        0           0        1  24.60  31.060   
+
+   humidity  windspeed  casual  registered  count  
+0        89     7.0015      37          77    114  
+1        83    27.9993      26         104    130  
+2        94     7.0015      23         188    211  
+3       100     8.9981       5          76     81  
+4        33    31.0009     242         230    472  </code></pre>
+</div>
+</div>
+</section>
+<section id="데이터-속성-변환" class="level2">
+<h2 class="anchored" data-anchor-id="데이터-속성-변환">데이터 속성 변환</h2>
+<div id="a18cd332" class="cell" data-results="hide" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.astype({<span class="st">'datetime'</span> : <span class="st">'datetime64[ns]'</span>, <span class="st">'weather'</span> : <span class="st">'int64'</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                <span class="st">'season'</span> : <span class="st">'object'</span>, <span class="st">'workingday'</span> : <span class="st">'object'</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">'holiday'</span> : <span class="st">'object'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="문제1.-계절이-1일-떄-가장-대여량이-많은-시간대를-구하시오." class="level2">
+<h2 class="anchored" data-anchor-id="문제1.-계절이-1일-떄-가장-대여량이-많은-시간대를-구하시오.">문제1. 계절이 1일 떄, 가장 대여량이 많은 시간대를 구하시오.</h2>
+<div id="aad13316" class="cell" data-results="show" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_s1 <span class="op">=</span> df[df[<span class="st">"season"</span>]<span class="op">==</span><span class="dv">1</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_s1</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df_s1[<span class="st">'hour'</span>] <span class="op">=</span> df_s1[<span class="st">'datetime'</span>].dt.hour</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df_s1.groupby(<span class="st">'hour'</span>)[<span class="st">'count'</span>].<span class="bu">max</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>df_s1.loc[df_s1[<span class="st">'count'</span>].idxmax()][<span class="st">"hour"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\USER\AppData\Local\Temp\ipykernel_30392\1773647396.py:3: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df_s1['hour'] = df_s1['datetime'].dt.hour</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>np.int32(17)</code></pre>
+</div>
+</div>
+</section>
+<section id="문제2.-각-계절별-평균-대여량을-구하시오" class="level2">
+<h2 class="anchored" data-anchor-id="문제2.-각-계절별-평균-대여량을-구하시오">문제2. 각 계절별 평균 대여량을 구하시오</h2>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
