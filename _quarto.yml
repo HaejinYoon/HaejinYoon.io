@@ -9,6 +9,10 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/HaejinYoon
+      - icon: instagram
+        href: https://www.instagram.com/haeppy_harry_/
+      - icon: facebook
+        href: https://www.facebook.com/HJY0718
 format:
   html:
     theme:

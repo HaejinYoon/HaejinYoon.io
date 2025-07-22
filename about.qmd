@@ -6,16 +6,16 @@ about:
   links:
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://kr.linkedin.com/in/haejin-yoon-4576b8325
     - icon: github
       text: Github
       href: https://github.com/HaejinYoon
     - icon: instagram
       text: instagram
-      href: https://github.com/HaejinYoon
+      href: https://www.instagram.com/haeppy_harry_/
     - icon: facebook
       text: facebook
-      href: https://github.com/HaejinYoon
+      href: https://www.facebook.com/HJY0718
 
 ---
 
