@@ -16,8 +16,7 @@ website:
 format:
   html:
     theme:
-      - simplex
-      - brand
+      - Simplex
     css: styles.css
 
 
